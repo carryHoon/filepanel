@@ -496,18 +496,27 @@ private struct EdgePanelView: View {
             }
     }
 
-    private var tabSymbol: String {
-        guard controller.isExpanded else { return "photo.on.rectangle.angled" }
-        return controller.edge == .left ? "chevron.left" : "chevron.right"
+    private var closeSymbol: String {
+        controller.edge == .left ? "chevron.left" : "chevron.right"
     }
 
     private var tab: some View {
-        // 아이콘 하나로 상태를 표현: 접힘 = 이미지 아이콘, 펼침 = 닫는 방향 화살표.
+        // 아이콘 하나로 상태를 표현: 접힘 = 앱 아이콘과 같은 변환 화살표, 펼침 = 닫는 방향 화살표.
         // 끌 수 있다는 건 손바닥 커서로 알려준다.
-        Image(systemName: tabSymbol)
-            .font(.system(size: 12, weight: .semibold))
-            .contentTransition(.symbolEffect(.replace))
+        Group {
+            if controller.isExpanded {
+                Image(systemName: closeSymbol)
+                    .font(.system(size: 12, weight: .semibold))
+            } else {
+                Image("ConvertArrows")
+                    .renderingMode(.template)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 14, height: 14)
+            }
+        }
             .foregroundStyle(.white)
+            .transition(.opacity)
             .frame(width: EdgePanelController.tabWidth, height: EdgePanelController.tabHeight)
             // 유리 틴트는 활성화될 때 모양 밖 사각형까지 그려져 각진 모서리가 겹쳐 보였다.
             // 강조 색 단색으로 채우고 모양대로 잘라서 둥근 모서리만 보이게 한다.
@@ -604,6 +613,18 @@ private final class TabMouseView: NSView {
     override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
     // 탭을 끄는 건 세로 위치 조절이지 창 이동이 아니다
     override var mouseDownCanMoveWindow: Bool { false }
+
+    // MARK: 손쉬운 사용 (VoiceOver에서 탭을 버튼으로 읽고 누를 수 있게)
+
+    override func isAccessibilityElement() -> Bool { true }
+    override func accessibilityRole() -> NSAccessibility.Role? { .button }
+    override func accessibilityLabel() -> String? {
+        controller?.isExpanded == true ? "파일 변환 패널 닫기" : "파일 변환 패널 열기"
+    }
+    override func accessibilityPerformPress() -> Bool {
+        controller?.toggle()
+        return true
+    }
 
     // MARK: 클릭 / 드래그
 

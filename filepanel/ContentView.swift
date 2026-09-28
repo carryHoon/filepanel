@@ -158,10 +158,14 @@ struct ContentView: View {
 
     private var header: some View {
         HStack(spacing: 10) {
-            Image(systemName: "photo.on.rectangle.angled")
-                .font(.title3)
+            // 앱 아이콘과 같은 변환 화살표. 템플릿 이미지라 강조 색·라이트/다크 모드를 따라간다.
+            Image("ConvertArrows")
+                .renderingMode(.template)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 20, height: 20)
                 .foregroundStyle(.tint)
-                .symbolRenderingMode(.hierarchical)
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 1) {
                 Text("파일 변환")

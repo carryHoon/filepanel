@@ -42,10 +42,12 @@ final class LaunchAtLogin {
     // MARK: - 첫 실행 안내
 
     /// 처음 실행했을 때 한 번만 물어본다. 사용자 동의 없이 자동 실행을 켜지 않는다.
-    func askIfNeeded() {
+    /// - Returns: 이번에 물어봤는지 (= 첫 실행인지)
+    @discardableResult
+    func askIfNeeded() -> Bool {
         refresh()
         let defaults = UserDefaults.standard
-        guard !defaults.bool(forKey: Self.hasAskedKey), !isEnabled else { return }
+        guard !defaults.bool(forKey: Self.hasAskedKey), !isEnabled else { return false }
         // 답을 고르기 전에 앱이 종료돼도 다시 묻지 않도록 먼저 기록한다
         defaults.set(true, forKey: Self.hasAskedKey)
 
@@ -57,7 +59,7 @@ final class LaunchAtLogin {
 
         // Dock 아이콘 없는 앱이라 먼저 활성화해야 안내 창이 다른 앱 뒤에 숨지 않는다
         NSApp.activate()
-        guard alert.runModal() == .alertFirstButtonReturn else { return }
+        guard alert.runModal() == .alertFirstButtonReturn else { return true }
         setEnabled(true)
 
         // 켜기로 했는데 실패했거나 추가 승인이 필요하면, 조용히 넘어가지 않고 알려준다
@@ -76,6 +78,7 @@ final class LaunchAtLogin {
                 openLoginItemsSettings()
             }
         }
+        return true
     }
 }
 #endif

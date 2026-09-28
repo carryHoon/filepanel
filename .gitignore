@@ -1,0 +1,17 @@
+# macOS
+.DS_Store
+
+# Xcode 사용자별 설정 (창 배치, 브레이크포인트 등 — 공유하지 않음)
+xcuserdata/
+*.xcuserstate
+
+# 빌드 결과물
+build/
+DerivedData/
+*.xcarchive
+
+# 서명 관련 파일 (절대 올리지 않음)
+*.p12
+*.cer
+*.mobileprovision
+*.provisionprofile

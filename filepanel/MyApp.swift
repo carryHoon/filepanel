@@ -56,8 +56,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             showSettings()
         }
         // 패널이 먼저 보이고 나서 물어봐야 무엇을 자동으로 열지 사용자가 알 수 있다
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { [panelController] in
-            panelController.launchAtLogin.askIfNeeded()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { [weak self] in
+            guard let self else { return }
+            let isFirstLaunch = self.panelController.launchAtLogin.askIfNeeded()
+            // 첫 실행에는 변환 화면을 한 번 펼쳐서, Dock 아이콘이 없어도 앱이 어디 있는지 바로 알 수 있게 한다
+            if isFirstLaunch {
+                self.revealConverter()
+            }
+        }
+    }
+
+    /// 가장자리 탭이 켜져 있으면 탭을 펼치고, 아니면 메뉴 막대 팝오버를 연다
+    private func revealConverter() {
+        if panelController.isTabVisible {
+            panelController.setExpanded(true)
+        } else {
+            menuBarController?.showPopover()
         }
     }
 

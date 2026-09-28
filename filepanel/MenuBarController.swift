@@ -23,9 +23,6 @@ final class MenuBarController: NSObject, NSPopoverDelegate {
     @ObservationIgnored private let statusItem: NSStatusItem
     @ObservationIgnored private let popover = NSPopover()
     @ObservationIgnored private let dropModel = FileDropModel()
-    /// 팝오버가 방금 닫혔는지. 열린 상태에서 아이콘을 누르면 팝오버가 먼저 닫히고(바깥 클릭) 곧바로
-    /// 클릭이 들어와 다시 열리는 문제가 있어서, 닫힌 직후의 클릭은 무시한다.
-    @ObservationIgnored private var lastCloseTime: TimeInterval = 0
 
     override init() {
         isVisible = UserDefaults.standard.object(forKey: Self.visibleKey) as? Bool ?? true
@@ -51,14 +48,13 @@ final class MenuBarController: NSObject, NSPopoverDelegate {
     }
 
     func popoverDidClose(_ notification: Notification) {
-        lastCloseTime = ProcessInfo.processInfo.systemUptime
         statusItem.button?.highlight(false)
     }
 
     private func togglePopover() {
         if popover.isShown {
             closePopover()
-        } else if ProcessInfo.processInfo.systemUptime - lastCloseTime > 0.25 {
+        } else {
             showPopover()
         }
     }
@@ -67,9 +63,12 @@ final class MenuBarController: NSObject, NSPopoverDelegate {
 
     private func configureButton() {
         guard let button = statusItem.button else { return }
-        let image = NSImage(systemSymbolName: "photo.on.rectangle.angled", accessibilityDescription: "파일 변환")
-        // 템플릿 이미지여야 메뉴 막대의 밝기/다크 모드에 맞춰 색이 바뀐다
+        // 앱 아이콘과 같은 변환 화살표(벡터). 템플릿 이미지여야 메뉴 막대의 밝기/다크 모드에 맞춰 색이 바뀐다.
+        let image = (NSImage(named: "ConvertArrows")?.copy() as? NSImage)
+            ?? NSImage(systemSymbolName: "arrow.triangle.2.circlepath", accessibilityDescription: nil)
+        image?.size = NSSize(width: 16, height: 16)
         image?.isTemplate = true
+        image?.accessibilityDescription = "파일 변환"
         button.image = image
         button.toolTip = "파일 변환 · 우클릭으로 설정"
 
@@ -112,8 +111,9 @@ final class MenuBarController: NSObject, NSPopoverDelegate {
 
         popover.contentViewController = viewController
         popover.contentSize = size
-        // 바깥을 누르면 닫히는 일반적인 메뉴 막대 동작
-        popover.behavior = .transient
+        // 메뉴 막대 아이콘을 다시 누를 때만 닫힌다.
+        // (바깥 클릭으로 닫히는 기본 동작이면, Finder에서 파일을 끌어오려고 클릭하는 순간 닫혀서 다시 열어야 했음)
+        popover.behavior = .applicationDefined
         popover.animates = true
         popover.delegate = self
     }
