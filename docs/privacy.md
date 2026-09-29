@@ -51,7 +51,7 @@ permalink: /privacy/
 ## 6. 정보의 보관 및 삭제
 
 앱은 개인정보를 수집하지 않으므로 보관하거나 삭제할 개인정보가 없습니다.
-기기에 저장된 설정값은 앱을 삭제하면 함께 삭제되며, 남아 있는 경우 `~/Library/Containers/` 안의 파일패널 폴더를 지우면 모두 삭제됩니다.
+기기에 저장된 설정값은 앱을 삭제하면 함께 삭제되며, 남아 있는 경우 `~/Library/Containers/com.carryhoon.filepanel` 폴더를 지우면 모두 삭제됩니다.
 
 ## 7. 아동의 개인정보
 
@@ -115,7 +115,7 @@ Only if you have enabled "Share with app developers" in macOS settings, Apple ma
 ## 6. Retention and deletion
 
 Because the app collects no personal data, there is no personal data to retain or delete.
-Settings stored on your device are removed when you delete the app. If any remain, deleting the FilePanel folder inside `~/Library/Containers/` removes them completely.
+Settings stored on your device are removed when you delete the app. If any remain, deleting the `~/Library/Containers/com.carryhoon.filepanel` folder removes them completely.
 
 ## 7. Children's privacy
 
