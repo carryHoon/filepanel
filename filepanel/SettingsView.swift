@@ -218,12 +218,6 @@ struct AboutSettingsView: View {
     GeneralSettingsView(controller: EdgePanelController())
 }
 
-#Preview("일반 · 모두 꺼짐") {
-    let controller = EdgePanelController()
-    controller.isTabVisible = false
-    return GeneralSettingsView(controller: controller)
-}
-
 #Preview("가장자리 탭") {
     EdgeTabSettingsView(controller: EdgePanelController())
 }
